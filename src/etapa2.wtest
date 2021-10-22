@@ -1,0 +1,28 @@
+import vagones.*
+import locomotoras.*
+import formaciones.*
+describe "primeraFormacion"{
+	const vagon1 = new VagonPasajero(ancho=4, largo=10,estaOrdenado=true, tieneBanio=true)
+	const vagon2 = new VagonPasajero(ancho=2, largo=7,estaOrdenado=false, tieneBanio=false)
+	const vagon3 = new VagonCarga(cargaIdeal=6800, maderasSueltas=5)
+	const vagon4 = new VagonDormitorio(compartimientos=8, cantCamas=3)
+	const unaFormacion = new Formacion()
+	const locomotora1 = new Locomotora(peso=3000, pesoArrastre=20000,velocidad=90)
+	const locomotora2 = new Locomotora(peso=5000, pesoArrastre=22000,velocidad=90)
+	method initialize(){
+		unaFormacion.agregarVagones([vagon1,vagon2,vagon3,vagon4])
+	}
+	test"agregar locomotora1: es eficiente, y no puede moverse"{
+		unaFormacion.agregarLocomotoras([locomotora1])
+		assert.that(unaFormacion.esEficiente())
+		assert.notThat(unaFormacion.puedeMoverse())
+		assert.equals(unaFormacion.kilosDeEmpujeParaMoverse(), 12800)
+	}
+	test"agregar locomotora2: no es eficiente, y si puede moverse"{
+		unaFormacion.agregarLocomotoras([locomotora1])
+		unaFormacion.agregarLocomotoras([locomotora2])
+		assert.notThat(unaFormacion.esEficiente())
+		assert.that(unaFormacion.puedeMoverse())
+		assert.equals(unaFormacion.kilosDeEmpujeParaMoverse(), 0)
+	}
+}

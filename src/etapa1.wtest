@@ -1,0 +1,76 @@
+import vagones.*
+import locomotoras.*
+import formaciones.*
+describe "primeraFormacion"{
+	const vagon1 = new VagonPasajero(ancho=4, largo=10,estaOrdenado=true, tieneBanio=true)
+	const vagon2 = new VagonPasajero(ancho=2, largo=7,estaOrdenado=false, tieneBanio=false)
+	const vagon3 = new VagonCarga(cargaIdeal=6800, maderasSueltas=5)
+	const vagon4 = new VagonDormitorio(compartimientos=8, cantCamas=3)
+	const unaFormacion = new Formacion()
+	method initialize(){
+		unaFormacion.agregarVagones([vagon1,vagon2,vagon3,vagon4])
+	}
+	test"comprobar vagones pasajeros"{
+		assert.equals(unaFormacion.vagones().get(0).cantPasajeros(), 100)
+		assert.equals(unaFormacion.vagones().get(1).cantPasajeros(), 41)
+		assert.equals(unaFormacion.vagones().get(2).cantPasajeros(), 0)
+		assert.equals(unaFormacion.vagones().get(3).cantPasajeros(), 24)
+	}
+	test"comprobar vagones peso"{
+		assert.equals(unaFormacion.vagones().get(0).peso(), 10300)
+		assert.equals(unaFormacion.vagones().get(1).peso(), 6080)
+		assert.equals(unaFormacion.vagones().get(2).peso(), 6300)
+		assert.equals(unaFormacion.vagones().get(3).peso(), 7120)
+	}
+	test"comprobar vagones carga"{
+		assert.equals(unaFormacion.vagones().get(0).cantidadMaximaDeCarga(), 300)
+		assert.equals(unaFormacion.vagones().get(1).cantidadMaximaDeCarga(), 800)
+		assert.equals(unaFormacion.vagones().get(2).cantidadMaximaDeCarga(), 4800)
+		assert.equals(unaFormacion.vagones().get(3).cantidadMaximaDeCarga(), 1200)
+	}
+	test"comprobar vagones baño"{
+		assert.that(unaFormacion.vagones().get(0).tieneBanio())
+		assert.notThat(unaFormacion.vagones().get(1).tieneBanio())
+		assert.notThat(unaFormacion.vagones().get(2).tieneBanio())
+		assert.that(unaFormacion.vagones().get(3).tieneBanio())
+	}
+	test "estado actual"{
+		assert.equals(unaFormacion.pasajerosTotales(), 165)
+		assert.equals(unaFormacion.esPopular(), 1)
+		assert.notThat(unaFormacion.esCarguera())
+		assert.equals(unaFormacion.dispersionDePesos(), 4220)
+		assert.equals(unaFormacion.cantBanios(), 2)
+	}
+	test "estado luego de mantenimiento"{
+		unaFormacion.hacerMantenimiento()
+		assert.equals(unaFormacion.pasajerosTotales(), 180)
+		assert.equals(unaFormacion.esPopular(), 2)
+		assert.notThat(unaFormacion.esCarguera())
+		assert.equals(unaFormacion.dispersionDePesos(), 3200)
+		assert.equals(unaFormacion.cantBanios(), 2)
+	}
+}
+
+describe "segundaaFormacion"{
+	const vagon1 = new VagonCarga(cargaIdeal=8000, maderasSueltas=1)
+	const vagon2 = new VagonDormitorio(compartimientos=15, cantCamas=4)
+	const unaFormacion = new Formacion()
+	method initialize(){
+		unaFormacion.agregarVagones([vagon1,vagon2])
+	}
+	test "estado actual"{
+		assert.equals(unaFormacion.pasajerosTotales(), 60)
+		assert.equals(unaFormacion.esPopular(), 1)
+		assert.that(unaFormacion.esCarguera())
+		assert.equals(unaFormacion.dispersionDePesos(), 900)
+		assert.equals(unaFormacion.cantBanios(), 1)
+	}
+	test "estado luego de mantenimiento"{
+		unaFormacion.hacerMantenimiento()
+		assert.equals(unaFormacion.pasajerosTotales(), 60)
+		assert.equals(unaFormacion.esPopular(), 1)
+		assert.that(unaFormacion.esCarguera())
+		assert.equals(unaFormacion.dispersionDePesos(), 500)
+		assert.equals(unaFormacion.cantBanios(), 1)
+	}
+}
